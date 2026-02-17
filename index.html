@@ -1,0 +1,644 @@
+import React, { useState, useEffect } from 'react';
+import { Calendar, CheckCircle, Circle, Target, TrendingUp, Activity } from 'lucide-react';
+
+const MarathonTrainingApp = () => {
+  const [completedWorkouts, setCompletedWorkouts] = useState(() => {
+    const saved = localStorage.getItem('marathonCompletedWorkouts');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const [currentWeek, setCurrentWeek] = useState(1);
+
+  useEffect(() => {
+    localStorage.setItem('marathonCompletedWorkouts', JSON.stringify(completedWorkouts));
+  }, [completedWorkouts]);
+
+  const trainingPlan = {
+    raceDate: "April 12, 2026",
+    raceDistance: "42.2km",
+    targetTime: "4:40",
+    targetPace: "6:37/km",
+    athlete: {
+      age: 26,
+      gender: "Male",
+      prs: {
+        "5k": "24:54",
+        "10k": "56:39",
+        "Half": "2:23:17"
+      }
+    },
+    weeks: [
+      {
+        week: 1,
+        dates: "Feb 17-23",
+        totalKm: 22,
+        focus: "Foundation",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine #1",
+            details: "10min bike/row warm-up • Circuit (3 rounds): SkiErg 250m, Goblet squats 12 reps, Push-ups 10-15, Sled push 25m, Plank 45sec • 5min cool-down",
+            duration: "35-40min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Quality)",
+            distance: "6km",
+            details: "Easy pace (Z2) - Find comfortable conversational pace",
+            pace: "6:50-7:10/km"
+          },
+          { 
+            day: "Thursday", 
+            type: "strength", 
+            activity: "Strength/Engine #2",
+            details: "10min row warm-up • Circuit (3 rounds): Rowing 500m, Lunges 10 each leg, Burpee broad jumps 8 reps, Sandbag lunges 20m, Dead bugs 20 total • 5min cool-down",
+            duration: "40min"
+          },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Easy)",
+            distance: "5km",
+            details: "Low stress recovery run",
+            pace: "Easy Z2"
+          },
+          { day: "Saturday", type: "rest", activity: "Rest" },
+          { 
+            day: "Sunday", 
+            type: "long", 
+            activity: "Run #3 (Long)",
+            distance: "11km",
+            details: "Run 4min/walk 1min throughout",
+            pace: "6:50-7:10/km"
+          }
+        ]
+      },
+      {
+        week: 2,
+        dates: "Feb 24-Mar 2",
+        totalKm: 27,
+        focus: "Build",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine #1",
+            details: "10min ski/bike warm-up • EMOM x 20min (alternating): Odd min: 250m row OR 15 wall balls, Even min: 10 KB swings + 30sec plank • Core finisher: 3x (20 Russian twists + 15 leg raises)",
+            duration: "30min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Quality)",
+            distance: "8km",
+            details: "1.5km warm-up easy • 3x 1km at moderate effort (Z3) - recovery: 2min walk/jog • 1.5km cool-down",
+            pace: "Z3 intervals"
+          },
+          { 
+            day: "Thursday", 
+            type: "strength", 
+            activity: "Strength/Engine #2",
+            details: "15min progression: 5min row (easy) → 5min SkiErg (moderate) → 5min bike (moderate-hard) • Strength block (3 rounds): Single-leg deadlifts 8 each, Box step-ups 10 each leg, Farmer carries 40m, Side planks 30sec each",
+            duration: "35min"
+          },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Easy)",
+            distance: "6km",
+            details: "Easy pace (Z2)",
+            pace: "Easy Z2"
+          },
+          { day: "Saturday", type: "rest", activity: "Rest" },
+          { 
+            day: "Sunday", 
+            type: "long", 
+            activity: "Run #3 (Long)",
+            distance: "13km",
+            details: "Run 4min/walk 1min",
+            pace: "6:45-7:00/km"
+          }
+        ]
+      },
+      {
+        week: 3,
+        dates: "Mar 3-9",
+        totalKm: 34,
+        focus: "Progressive Build",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine #1",
+            details: "5min warm-up • Hyrox Station Simulation: 1km row, 50m sled push, 1km SkiErg, 50m sled pull, 5min sandbag lunges • Core: 3x (45sec plank + 20 V-ups)",
+            duration: "40-45min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Quality)",
+            distance: "11km",
+            details: "2km warm-up • 4x 1.5km at moderate (Z3) - recovery: 90sec walk • 2km cool-down",
+            pace: "Z3 intervals"
+          },
+          { 
+            day: "Thursday", 
+            type: "strength", 
+            activity: "Strength/Engine #2",
+            details: "20min EMOM: Min 1: 15 burpees, Min 2: 20 wall balls, Min 3: 300m row, Min 4: 15 KB swings + 10 push-ups • Repeat x5",
+            duration: "20min"
+          },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Easy)",
+            distance: "7km",
+            details: "Easy pace (Z2)",
+            pace: "Easy Z2"
+          },
+          { day: "Saturday", type: "rest", activity: "Rest" },
+          { 
+            day: "Sunday", 
+            type: "long", 
+            activity: "Run #3 (Long)",
+            distance: "16km",
+            details: "Run 5min/walk 1min",
+            pace: "6:40-6:50/km"
+          }
+        ]
+      },
+      {
+        week: 4,
+        dates: "Mar 10-16",
+        totalKm: 24,
+        focus: "Recovery",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine #1",
+            details: "30min EASY mixed cardio: 10min bike (Z2) → 10min row (Z2) → 10min ski (Z2) • Light core: 2x (30sec plank + 15 dead bugs)",
+            duration: "35min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Easy)",
+            distance: "8km",
+            details: "No intensity - pure aerobic",
+            pace: "Easy Z2"
+          },
+          { 
+            day: "Thursday", 
+            type: "strength", 
+            activity: "Strength/Engine #2",
+            details: "Active recovery circuit (2 rounds, low intensity): 500m row easy, 10 goblet squats (light), 10 push-ups, 25m sled push (light) • Mobility: hip flexor stretch, pigeon pose",
+            duration: "30min"
+          },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Easy)",
+            distance: "5km",
+            details: "Easy pace (Z2)",
+            pace: "Easy Z2"
+          },
+          { day: "Saturday", type: "rest", activity: "Rest" },
+          { 
+            day: "Sunday", 
+            type: "long", 
+            activity: "Run #3 (Long)",
+            distance: "11km",
+            details: "Moderate easy - no walk breaks (but can if needed)",
+            pace: "6:40/km"
+          }
+        ]
+      },
+      {
+        week: 5,
+        dates: "Mar 17-23",
+        totalKm: 39,
+        focus: "Peak Volume",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine #1",
+            details: "Hyrox Challenge Simulation: 500m row (hard), 100m sled push, 500m SkiErg (hard), 15 burpee broad jumps, 100m sandbag lunges • Rest 3min • Core circuit: 3x (1min plank + 20 Russian twists + 15 leg raises)",
+            duration: "35min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Quality)",
+            distance: "10km",
+            details: "3km warm-up • 5km at GOAL MARATHON PACE (6:37/km) • 2km cool-down",
+            pace: "6:37/km goal pace"
+          },
+          { 
+            day: "Thursday", 
+            type: "strength", 
+            activity: "Strength/Engine #2",
+            details: "25min continuous work: 250m row, 10 wall balls, 20m sled push, 10 burpees • Repeat for 25min (AMRAP)",
+            duration: "25min"
+          },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Easy)",
+            distance: "8km",
+            details: "Day after quality - keep it comfortable",
+            pace: "Easy Z2"
+          },
+          { day: "Saturday", type: "rest", activity: "Rest" },
+          { 
+            day: "Sunday", 
+            type: "long", 
+            activity: "Run #3 (Long) - PEAK",
+            distance: "21km",
+            details: "Run 5min/walk 1min strategy • PRACTICE RACE DAY FUELING (gel at 10km, 14km, 19km)",
+            pace: "6:45-6:55/km"
+          }
+        ]
+      },
+      {
+        week: 6,
+        dates: "Mar 24-30",
+        totalKm: 32,
+        focus: "Maintain",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine #1",
+            details: "15min cardio pyramid: 3min row → 3min ski → 3min bike → 3min ski → 3min row (moderate effort) • Strength (3 rounds): Bulgarian split squats 8 each, Push press 10 reps, Sled drag 40m, Hanging knee raises 12",
+            duration: "35min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Quality)",
+            distance: "11km",
+            details: "2km warm-up • 4x 2km at goal pace (6:37/km) - recovery: 2min walk • 1km cool-down",
+            pace: "6:37/km goal pace"
+          },
+          { 
+            day: "Thursday", 
+            type: "strength", 
+            activity: "Strength/Engine #2",
+            details: "EMOM x 24min (4 movements x 6 rounds): Min 1: 20 wall balls, Min 2: 400m row, Min 3: 15 KB swings, Min 4: 12 burpees",
+            duration: "24min"
+          },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Easy)",
+            distance: "5km",
+            details: "Easy pace (Z2)",
+            pace: "Easy Z2"
+          },
+          { day: "Saturday", type: "rest", activity: "Rest" },
+          { 
+            day: "Sunday", 
+            type: "long", 
+            activity: "Run #3 (Long)",
+            distance: "16km",
+            details: "Run 6min/walk 1min",
+            pace: "6:37-6:50/km"
+          }
+        ]
+      },
+      {
+        week: 7,
+        dates: "Mar 31-Apr 6",
+        totalKm: 23,
+        focus: "Taper",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine #1 - LIGHT",
+            details: "20min mixed cardio (Z2): 5min row → 5min ski → 5min bike → 5min row • Light core: 2x (30sec plank + 15 bird dogs)",
+            duration: "25min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Quality)",
+            distance: "9km",
+            details: "2km warm-up • 2x 3km at goal pace (6:37/km) - recovery: 3min walk • 1km cool-down",
+            pace: "6:37/km goal pace"
+          },
+          { 
+            day: "Thursday", 
+            type: "strength", 
+            activity: "Strength/Engine #2 - VERY LIGHT",
+            details: "15min easy mixed cardio • Mobility/stretching: 10min",
+            duration: "25min"
+          },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Easy)",
+            distance: "5km",
+            details: "Easy pace (Z2)",
+            pace: "Easy Z2"
+          },
+          { day: "Saturday", type: "rest", activity: "Rest" },
+          { 
+            day: "Sunday", 
+            type: "long", 
+            activity: "Run #3 (Long)",
+            distance: "9km",
+            details: "Last 'long' effort before race",
+            pace: "6:30-6:50/km"
+          }
+        ]
+      },
+      {
+        week: 8,
+        dates: "Apr 7-12",
+        totalKm: 8,
+        focus: "RACE WEEK",
+        workouts: [
+          { day: "Monday", type: "rest", activity: "Rest" },
+          { 
+            day: "Tuesday", 
+            type: "strength", 
+            activity: "Strength/Engine - VERY LIGHT",
+            details: "15min easy cardio (row/bike) • Stretch and roll: 10min",
+            duration: "25min"
+          },
+          { 
+            day: "Wednesday", 
+            type: "run", 
+            activity: "Run #1 (Shakeout)",
+            distance: "5km",
+            details: "Easy with 3x 3min at goal pace - should feel snappy",
+            pace: "Easy + pickups"
+          },
+          { day: "Thursday", type: "rest", activity: "Rest or 20min walk" },
+          { 
+            day: "Friday", 
+            type: "run", 
+            activity: "Run #2 (Final Shakeout)",
+            distance: "3km",
+            details: "EASY - just loosen the legs",
+            pace: "Easy"
+          },
+          { day: "Saturday", type: "rest", activity: "Complete rest • Prep gear, carb load, hydrate" },
+          { day: "Sunday", type: "race", activity: "🏃‍♂️ MARATHON DAY - 42.2km", distance: "42.2km", details: "Target: 4:40 (6:37/km pace)" }
+        ]
+      }
+    ]
+  };
+
+  const toggleWorkout = (weekNum, workoutIndex) => {
+    const key = `week${weekNum}-workout${workoutIndex}`;
+    setCompletedWorkouts(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const getWeekCompletion = (weekNum) => {
+    const week = trainingPlan.weeks.find(w => w.week === weekNum);
+    if (!week) return 0;
+    
+    const totalWorkouts = week.workouts.filter(w => w.type !== 'rest').length;
+    const completed = week.workouts.filter((w, idx) => 
+      w.type !== 'rest' && completedWorkouts[`week${weekNum}-workout${idx}`]
+    ).length;
+    
+    return Math.round((completed / totalWorkouts) * 100);
+  };
+
+  const getTypeColor = (type) => {
+    switch(type) {
+      case 'run': return 'bg-blue-500';
+      case 'long': return 'bg-purple-500';
+      case 'strength': return 'bg-orange-500';
+      case 'rest': return 'bg-gray-400';
+      case 'race': return 'bg-green-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getTypeIcon = (type) => {
+    switch(type) {
+      case 'run':
+      case 'long':
+        return '🏃‍♂️';
+      case 'strength':
+        return '💪';
+      case 'rest':
+        return '😴';
+      case 'race':
+        return '🏁';
+      default:
+        return '📅';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Marathon Training Plan</h1>
+              <p className="text-gray-600">Race Day: {trainingPlan.raceDate} • Target: {trainingPlan.targetTime}</p>
+            </div>
+            <Target className="w-12 h-12 text-blue-600" />
+          </div>
+          
+          {/* Athlete Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-700 mb-2">Athlete Profile</h3>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>Age: {trainingPlan.athlete.age} • {trainingPlan.athlete.gender}</p>
+                <p>5k PR: {trainingPlan.athlete.prs["5k"]} | 10k PR: {trainingPlan.athlete.prs["10k"]}</p>
+                <p>Half Marathon PR: {trainingPlan.athlete.prs.Half}</p>
+              </div>
+            </div>
+            
+            <div className="bg-indigo-50 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-700 mb-2">Race Target</h3>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>Distance: {trainingPlan.raceDistance}</p>
+                <p>Target Time: {trainingPlan.targetTime}</p>
+                <p>Target Pace: {trainingPlan.targetPace}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Week Navigator */}
+        <div className="bg-white rounded-xl shadow-lg p-4 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-800">Training Weeks</h2>
+            <Activity className="w-6 h-6 text-blue-600" />
+          </div>
+          <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+            {trainingPlan.weeks.map((week) => {
+              const completion = getWeekCompletion(week.week);
+              return (
+                <button
+                  key={week.week}
+                  onClick={() => setCurrentWeek(week.week)}
+                  className={`p-3 rounded-lg transition-all ${
+                    currentWeek === week.week
+                      ? 'bg-blue-600 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <div className="text-sm font-semibold">W{week.week}</div>
+                  <div className="text-xs mt-1">{completion}%</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Current Week Display */}
+        {trainingPlan.weeks.map((week) => {
+          if (week.week !== currentWeek) return null;
+          
+          const completion = getWeekCompletion(week.week);
+          
+          return (
+            <div key={week.week} className="bg-white rounded-xl shadow-lg p-6 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">Week {week.week}: {week.focus}</h2>
+                  <p className="text-gray-600">{week.dates} • Total: {week.totalKm}km</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-blue-600">{completion}%</div>
+                  <div className="text-sm text-gray-500">Complete</div>
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
+                <div
+                  className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                  style={{ width: `${completion}%` }}
+                />
+              </div>
+
+              {/* Workouts */}
+              <div className="space-y-3">
+                {week.workouts.map((workout, idx) => {
+                  const isCompleted = completedWorkouts[`week${week.week}-workout${idx}`];
+                  const isRest = workout.type === 'rest';
+                  
+                  return (
+                    <div
+                      key={idx}
+                      className={`border-2 rounded-lg p-4 transition-all ${
+                        isCompleted
+                          ? 'border-green-500 bg-green-50'
+                          : isRest
+                          ? 'border-gray-300 bg-gray-50'
+                          : 'border-gray-300 bg-white hover:border-blue-400'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-2xl">{getTypeIcon(workout.type)}</span>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-gray-700">{workout.day}</span>
+                                <span className={`px-2 py-1 rounded text-xs text-white ${getTypeColor(workout.type)}`}>
+                                  {workout.type.toUpperCase()}
+                                </span>
+                                {workout.distance && (
+                                  <span className="text-sm font-semibold text-blue-600">{workout.distance}</span>
+                                )}
+                              </div>
+                              <div className="text-sm font-medium text-gray-800 mt-1">{workout.activity}</div>
+                            </div>
+                          </div>
+                          
+                          {workout.details && (
+                            <div className="ml-11 text-sm text-gray-600 mt-2">
+                              {workout.details}
+                            </div>
+                          )}
+                          
+                          {(workout.pace || workout.duration) && (
+                            <div className="ml-11 flex gap-4 mt-2">
+                              {workout.pace && (
+                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                  Pace: {workout.pace}
+                                </span>
+                              )}
+                              {workout.duration && (
+                                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">
+                                  Duration: {workout.duration}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {!isRest && (
+                          <button
+                            onClick={() => toggleWorkout(week.week, idx)}
+                            className="ml-4"
+                          >
+                            {isCompleted ? (
+                              <CheckCircle className="w-8 h-8 text-green-500" />
+                            ) : (
+                              <Circle className="w-8 h-8 text-gray-300 hover:text-blue-400" />
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Race Day Strategy */}
+        {currentWeek === 8 && (
+          <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-xl shadow-lg p-6 text-white">
+            <h2 className="text-2xl font-bold mb-4">🏁 Race Day Strategy</h2>
+            <div className="space-y-2 text-sm">
+              <p><strong>Km 1-8:</strong> 6:25-6:30/km (START EASY!)</p>
+              <p><strong>Km 9-21:</strong> 6:37/km + walk 1min every km</p>
+              <p><strong>Km 22-32:</strong> 6:37-6:45/km + walk as needed</p>
+              <p><strong>Km 33-42.2:</strong> Survive - run what you can!</p>
+              <p className="mt-4"><strong>Nutrition:</strong> Gel/chews at km 10, 16, 22, 29, 35</p>
+              <p><strong>Hydration:</strong> Water at EVERY aid station</p>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="bg-white rounded-xl shadow-lg p-4 mt-6 text-center text-sm text-gray-600">
+          <p>Heart Rate Zones: Z2 (135-155 bpm) | Z3 (155-165 bpm) | Z4 (165-175 bpm)</p>
+          <p className="mt-2">💪 Stay consistent • 🛌 Prioritize sleep • 🍽️ Fuel properly • 🚨 Stop if pain persists</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MarathonTrainingApp;
